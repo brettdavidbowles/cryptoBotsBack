@@ -63,7 +63,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'cryptoBots.urls'
 
@@ -150,6 +149,8 @@ STATIC_ROOT = os.path.join(BASE_DIR,'static')
 # location where you will store your static files
 STATICFILES_DIRS = [os.path.join(BASE_DIR,'project_name/static')
 ]
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 MEDIA_URL = '/media/'
 
