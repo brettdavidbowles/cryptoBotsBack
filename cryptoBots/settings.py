@@ -33,9 +33,9 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'https://crypto-bots-back.herokuapp.com'
+    # 'localhost',
+    # '127.0.0.1',
+    'https://crypto-bots-back.herokuapp.com/'
     ]
 
 
