@@ -8,9 +8,9 @@ from django.conf import settings
 class User(AbstractUser):
 	id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
 	api_key = models.UUIDField(unique=True, default=uuid.uuid4, editable=False)
-	name = models.CharField(max_length=200)
+	# name = models.CharField(max_length=200)
 	def __str__(self):
-		return self.name
+		return self.username
 
 class Bot(models.Model):
 	name = models.CharField(max_length=200)
