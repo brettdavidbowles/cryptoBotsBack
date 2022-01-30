@@ -18,3 +18,6 @@ class Query(graphene.ObjectType):
 	
 	def resolve_coins(self, info, **kwargs):
 		return Coin.objects.all()
+
+class CoinInput(graphene.InputObjectType):
+	abbrev = graphene.String(required=True)

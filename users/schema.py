@@ -48,3 +48,7 @@ class Query(graphene.ObjectType):
         if user.is_anonymous:
             raise Exception('Authentication Failure!')
         return user
+
+class UserInput(graphene.InputObjectType):
+    username = graphene.String(required=True)
+    api_key = graphene.String(required=True)

@@ -1,8 +1,12 @@
+# from platform import java_ver
+# from numpy import require
 import graphene
 from graphene_django import DjangoObjectType
 
-from api.models import Transaction
-
+from api.models import Transaction, Bot, Coin, User
+from bots.schema import BotInput
+from coins.schema import CoinInput
+from users.schema import UserInput
 class TransactionType(DjangoObjectType):
     change_in_total = graphene.Float(source="change_in_total")
 
@@ -30,3 +34,39 @@ class Query(graphene.ObjectType):
 	def resolve_transactions_by_bot_and_coin(self, info, bot_name = None, coin_abbrev = None, **kwargs):
 		if bot_name and coin_abbrev:
 			return Transaction.objects.filter(bot__name=bot_name, coin__abbrev=coin_abbrev)
+
+class TransactionInput(graphene.InputObjectType):
+	bot = graphene.Field(BotInput)
+	coin = graphene.Field(CoinInput)
+	user = graphene.Field(UserInput)
+	is_sale = graphene.Boolean(required=True)
+	coin_quantity = graphene.Decimal(required=True)
+	contemporary_coin_price = graphene.Decimal(required=True)
+	profit = graphene.Decimal(required=True)
+	name = graphene.String(required=True)
+
+
+class CreateTransaction(graphene.Mutation):
+	transaction = graphene.Field(TransactionType)
+	class Arguments:
+		input_data = TransactionInput(required=True)
+
+	@staticmethod
+	def mutate(root, info, input_data):
+		bot = Bot.objects.get(name=input_data.bot.name)
+		coin = Coin.objects.get(abbrev=input_data.coin.abbrev)
+		user = User.objects.get(username=input_data.user.username, api_key=input_data.user.api_key)
+		transaction = Transaction.objects.create(
+			bot=bot,
+			coin=coin,
+			user=user,
+			is_sale=input_data.is_sale,
+			coin_quantity=input_data.coin_quantity,
+			contemporary_coin_price=input_data.contemporary_coin_price,
+			profit=input_data.profit,
+			name=input_data.name
+		)
+		return CreateTransaction(transaction=transaction)
+
+class Mutation(graphene.ObjectType):
+    create_transaction = CreateTransaction.Field()

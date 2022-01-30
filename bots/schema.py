@@ -23,3 +23,6 @@ class Query(graphene.ObjectType):
 	
 	def resolve_bots(self, info, **kwargs):
 		return Bot.objects.all()
+
+class BotInput(graphene.InputObjectType):
+	name = graphene.String(required=True)

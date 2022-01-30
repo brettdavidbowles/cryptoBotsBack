@@ -30,7 +30,7 @@ class Transaction(models.Model):
 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-	is_sale = models.BooleanField
+	is_sale = models.BooleanField(default=False)
 	coin_quantity = models.DecimalField(max_digits=16, decimal_places=5)
 	contemporary_coin_price = models.DecimalField(max_digits=16, decimal_places=2)
 	change_in_total = models.DecimalField(max_digits=16, decimal_places=5)
