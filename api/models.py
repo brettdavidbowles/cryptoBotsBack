@@ -32,6 +32,7 @@ class Transaction(models.Model):
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 	is_sale = models.BooleanField(default=False)
 	coin_quantity = models.DecimalField(max_digits=16, decimal_places=5)
+	transaction_price = models.DecimalField(max_digits=16, decimal_places=2)
 	contemporary_coin_price = models.DecimalField(max_digits=16, decimal_places=2)
 	change_in_total = models.DecimalField(max_digits=16, decimal_places=5)
 	transaction_date_time = models.DateTimeField(auto_now_add=True)
@@ -43,4 +44,4 @@ class Transaction(models.Model):
 
 	@property
 	def change_in_total(self):
-		return self.coin_quantity * self.contemporary_coin_price
+		return self.coin_quantity * self.transaction_price

@@ -41,6 +41,7 @@ class TransactionInput(graphene.InputObjectType):
 	user = graphene.Field(UserInput)
 	is_sale = graphene.Boolean(required=True)
 	coin_quantity = graphene.Decimal(required=True)
+	transaction_price = graphene.Decimal(required=True)
 	contemporary_coin_price = graphene.Decimal(required=True)
 	profit = graphene.Decimal(required=True)
 	name = graphene.String(required=True)
@@ -62,6 +63,7 @@ class CreateTransaction(graphene.Mutation):
 			user=user,
 			is_sale=input_data.is_sale,
 			coin_quantity=input_data.coin_quantity,
+			transaction_price=input_data.transaction_price,
 			contemporary_coin_price=input_data.contemporary_coin_price,
 			profit=input_data.profit,
 			name=input_data.name
