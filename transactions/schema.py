@@ -9,6 +9,7 @@ from api.models import Transaction, Bot, Coin, User, ProfitPerDay
 from bots.schema import BotInput
 from coins.schema import CoinInput
 from users.schema import UserInput
+
 class TransactionType(DjangoObjectType):
     change_in_total = graphene.Float(source="change_in_total")
 
