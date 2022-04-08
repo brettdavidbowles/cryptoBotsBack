@@ -45,3 +45,14 @@ class Transaction(models.Model):
 	@property
 	def change_in_total(self):
 		return self.coin_quantity * self.transaction_price
+
+class ProfitPerDay(models.Model):
+	date = models.DateField(auto_now_add=True)
+	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
+	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+	profit = models.DecimalField(max_digits=16, decimal_places=5)
+	name = models.CharField(max_length=200)
+
+	def __str__(self):
+		return self.name

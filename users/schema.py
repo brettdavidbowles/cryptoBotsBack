@@ -6,7 +6,7 @@ from graphene_django import DjangoObjectType
 class UserType(DjangoObjectType):
     class Meta:
         model = get_user_model()
-        exclude = ("api_key", "password", "id", "isSuperuser")
+        exclude = ("api_key", "password", "id" )
 
 
 class CreateUser(graphene.Mutation):

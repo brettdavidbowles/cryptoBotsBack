@@ -3,7 +3,9 @@
 import graphene
 from graphene_django import DjangoObjectType
 
-from api.models import Transaction, Bot, Coin, User
+import datetime
+
+from api.models import Transaction, Bot, Coin, User, ProfitPerDay
 from bots.schema import BotInput
 from coins.schema import CoinInput
 from users.schema import UserInput
@@ -68,6 +70,28 @@ class CreateTransaction(graphene.Mutation):
 			profit=input_data.profit,
 			name=input_data.name
 		)
+		ProfitObject = ProfitPerDay.objects.filter(
+										bot=bot
+									).filter(
+										coin=coin
+									).filter(
+										user=user
+									).filter(
+										date=datetime.date.today()
+									)
+		if ProfitObject:
+			ProfitObject[0].profit += input_data.profit
+			ProfitObject[0].save()
+		else:
+			NewProfitObject = ProfitPerDay(
+				bot=bot,
+				coin=coin,
+				user=user,
+				profit=input_data.profit,
+				name=user.username + '_' + bot.name + '_' + coin.abbrev + '_' + str(datetime.date.today())
+			)
+			NewProfitObject.save()
+			print(user.username + '_' + bot.name + '_' + coin.abbrev + '_' + str(datetime.date.today()))
 		return CreateTransaction(transaction=transaction)
 
 class Mutation(graphene.ObjectType):
