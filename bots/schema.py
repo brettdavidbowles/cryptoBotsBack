@@ -20,9 +20,14 @@ class BotType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
 	bots = graphene.List(BotType)
+	bots_by_user = graphene.List(BotType, username=graphene.String())
 	
 	def resolve_bots(self, info, **kwargs):
 		return Bot.objects.all()
+	
+	def resolve_bots_by_user(self, info, username = None):
+		if username:
+			return Bot.objects.filter(user__username=username)
 
 class BotInput(graphene.InputObjectType):
 	name = graphene.String(required=True)
