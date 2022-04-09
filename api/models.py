@@ -14,6 +14,8 @@ class User(AbstractUser):
 
 class Bot(models.Model):
 	name = models.CharField(max_length=200)
+	title = models.CharField(max_length=50)
+	url=models.CharField(max_length=50)
 	user = models.ManyToManyField(settings.AUTH_USER_MODEL)
 
 	def __str__(self):
