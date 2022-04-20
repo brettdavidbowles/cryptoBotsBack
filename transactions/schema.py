@@ -44,6 +44,7 @@ class TransactionInput(graphene.InputObjectType):
 	quantity = graphene.Decimal(required=True)
 	bought_price = graphene.Decimal(required=False, default_value="0")
 	sell_price = graphene.Decimal(required=False, default_value="0")
+	current_price = graphene.Decimal(required=True)
 	name = graphene.String(required=True)
 
 
@@ -64,6 +65,7 @@ class CreateTransaction(graphene.Mutation):
 			quantity = input_data.quantity,
 			bought_price = input_data.bought_price,
 			sell_price = input_data.sell_price,
+			current_price = input_data.current_price,
 			name=input_data.name
 		)
 		# ProfitObject = ProfitPerDay.objects.filter(
