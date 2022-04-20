@@ -3,7 +3,7 @@ from graphene_django import DjangoObjectType
 
 import datetime
 
-from api.models import DeprecatedTransaction, Bot, Coin, User, ProfitPerDay
+from api.models import DeprecatedTransaction2, Bot, Coin, User, ProfitPerDay
 from bots.schema import BotInput
 from coins.schema import CoinInput
 from users.schema import UserInput
@@ -12,7 +12,7 @@ class TransactionType(DjangoObjectType):
     change_in_total = graphene.Float(source="change_in_total")
 
     class Meta:
-        model = DeprecatedTransaction
+        model = DeprecatedTransaction2
         fields = "__all__"
 
 class Query(graphene.ObjectType):
@@ -22,19 +22,19 @@ class Query(graphene.ObjectType):
 	transactions_by_bot_and_coin = graphene.List(TransactionType, bot_name=graphene.String(), coin_abbrev=graphene.String())
 
 	def resolve_transactions(self, info, **kwargs):
-		return DeprecatedTransaction.objects.all()
+		return DeprecatedTransaction2.objects.all()
 
 	def resolve_transactions_by_bot(self, info, bot_name = None, **kwargs):
 		if bot_name:
-			return DeprecatedTransaction.objects.filter(bot__name=bot_name)
+			return DeprecatedTransaction2.objects.filter(bot__name=bot_name)
 
 	def resolve_transactions_by_coin(self, info, coin_abbrev = None, **kwargs):
 		if coin_abbrev:
-			return DeprecatedTransaction.objects.filter(coin__abbrev=coin_abbrev)
+			return DeprecatedTransaction2.objects.filter(coin__abbrev=coin_abbrev)
     
 	def resolve_transactions_by_bot_and_coin(self, info, bot_name = None, coin_abbrev = None, **kwargs):
 		if bot_name and coin_abbrev:
-			return DeprecatedTransaction.objects.filter(bot__name=bot_name, coin__abbrev=coin_abbrev)
+			return DeprecatedTransaction2.objects.filter(bot__name=bot_name, coin__abbrev=coin_abbrev)
 
 class TransactionInput(graphene.InputObjectType):
 	bot = graphene.Field(BotInput)
@@ -61,7 +61,7 @@ class CreateTransaction(graphene.Mutation):
 		bot = Bot.objects.get(name=input_data.bot.name)
 		coin = Coin.objects.get(abbrev=input_data.coin.abbrev)
 		user = User.objects.get(username=input_data.user.username, api_key=input_data.user.api_key)
-		transaction = DeprecatedTransaction.objects.create(
+		transaction = DeprecatedTransaction2.objects.create(
 			bot=bot,
 			coin=coin,
 			user=user,

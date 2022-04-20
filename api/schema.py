@@ -4,7 +4,7 @@ import graphql_jwt
 # from graphene_django import DjangoObjectType
 from django.db.models import Sum
 
-from api.models import DeprecatedTransaction, Bot, Coin
+from api.models import DeprecatedTransaction2, Bot, Coin
 import users.schema
 import bots.schema
 import coins.schema

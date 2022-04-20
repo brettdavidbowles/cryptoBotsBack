@@ -28,7 +28,7 @@ class Coin(models.Model):
 	def __str__(self):
 		return self.name
 
-class DeprecatedTransaction(models.Model):
+class DeprecatedTransaction2(models.Model):
 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
