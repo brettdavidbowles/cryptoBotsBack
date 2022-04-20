@@ -62,18 +62,19 @@ class ProfitPerDay(models.Model):
 	def __str__(self):
 		return self.name
 
-# class Transaction(models.Model):
-# 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
-# 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
-# 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-# 	quantity = models.DecimalField(max_digits=16, decimal_places=5)
-# 	bought_price = models.DecimalField(max_digits=16, decimal_places=5)
-# 	sell_price = models.DecimalField(max_digits=16, decimal_places=5)
-# 	name = models.CharField(max_length=200, default='default')
+class Transaction(models.Model):
+	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
+	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
+	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+	quantity = models.DecimalField(max_digits=16, decimal_places=5)
+	bought_price = models.DecimalField(max_digits=16, decimal_places=5)
+	sell_price = models.DecimalField(max_digits=16, decimal_places=5)
+	date_time = models.DateTimeField(auto_now_add=True)
+	name = models.CharField(max_length=200, default='default')
 
-# 	def __str__(self):
-# 		return self.name
+	def __str__(self):
+		return self.name
 
-# 	@property
-# 	def change_in_total(self):
-# 		return self.coin_quantity * self.transaction_price
+	@property
+	def change_in_total(self):
+		return self.coin_quantity * self.transaction_price
