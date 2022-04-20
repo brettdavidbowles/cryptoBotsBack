@@ -9,7 +9,7 @@ admin.site.register(Coin)
 class UserAdmin(admin.ModelAdmin):
     readonly_fields = ('api_key',)
 class DeprecatedTransaction2Admin(admin.ModelAdmin):
-    readonly_fields = ('transaction_date_time',)
+    readonly_fields = ('transaction_date_time', 'change_in_total',)
 class ProfitPerDayAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
 class TransactionAdmin(admin.ModelAdmin):

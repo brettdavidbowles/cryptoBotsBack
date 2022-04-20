@@ -67,8 +67,8 @@ class Transaction(models.Model):
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 	quantity = models.DecimalField(max_digits=16, decimal_places=5)
-	bought_price = models.DecimalField(max_digits=16, decimal_places=5)
-	sell_price = models.DecimalField(max_digits=16, decimal_places=5)
+	bought_price = models.DecimalField(max_digits=16, decimal_places=5, default=0)
+	sell_price = models.DecimalField(max_digits=16, decimal_places=5, default=0)
 	date_time = models.DateTimeField(auto_now_add=True)
 	name = models.CharField(max_length=200, default='default')
 
