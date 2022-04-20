@@ -28,12 +28,15 @@ class Coin(models.Model):
 	def __str__(self):
 		return self.name
 
-class Transaction(models.Model):
+class DeprecatedTransaction(models.Model):
 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 	is_sale = models.BooleanField(default=False)
 	coin_quantity = models.DecimalField(max_digits=16, decimal_places=5)
+	quantity = models.DecimalField(max_digits=16, decimal_places=5)
+	bought_price = models.DecimalField(max_digits=16, decimal_places=5)
+	sell_price = models.DecimalField(max_digits=16, decimal_places=5)
 	transaction_price = models.DecimalField(max_digits=16, decimal_places=2)
 	contemporary_coin_price = models.DecimalField(max_digits=16, decimal_places=2)
 	change_in_total = models.DecimalField(max_digits=16, decimal_places=5)
@@ -58,3 +61,19 @@ class ProfitPerDay(models.Model):
 
 	def __str__(self):
 		return self.name
+
+# class Transaction(models.Model):
+# 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
+# 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
+# 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+# 	quantity = models.DecimalField(max_digits=16, decimal_places=5)
+# 	bought_price = models.DecimalField(max_digits=16, decimal_places=5)
+# 	sell_price = models.DecimalField(max_digits=16, decimal_places=5)
+# 	name = models.CharField(max_length=200, default='default')
+
+# 	def __str__(self):
+# 		return self.name
+
+# 	@property
+# 	def change_in_total(self):
+# 		return self.coin_quantity * self.transaction_price
