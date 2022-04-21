@@ -66,10 +66,10 @@ class Transaction(models.Model):
 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
 	user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
-	quantity = models.DecimalField(max_digits=16, decimal_places=5)
-	bought_price = models.DecimalField(max_digits=16, decimal_places=5, default=0)
-	sell_price = models.DecimalField(max_digits=16, decimal_places=5, default=0)
-	current_price = models.DecimalField(max_digits=16, decimal_places=5)
+	quantity = models.FloatField()
+	bought_price = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+	sell_price = models.DecimalField(max_digits=16, decimal_places=2, default=0)
+	current_price = models.DecimalField(max_digits=16, decimal_places=2)
 	date_time = models.DateTimeField(auto_now_add=True)
 	name = models.CharField(max_length=200, default='default')
 
@@ -77,5 +77,17 @@ class Transaction(models.Model):
 		return self.name
 
 	@property
-	def change_in_total(self):
-		return self.coin_quantity * self.transaction_price
+	def transaction_profit(self):
+		if self.sell_price:
+			return (self.sell_price * self.quantity) - (Transaction.objects.filter(
+				coin=self.coin).get(
+				id = max(Transaction.objects.filter(
+				coin=self.coin).id)
+			).bought_price * self.quantity)
+		if self.bought_price:
+			return ()
+	
+	@property
+	def max_former_id(self):
+		if Transaction.objects.filter(coin=self.coin):
+			return list(Transaction.objects.filter(coin=self.coin)).pop().id

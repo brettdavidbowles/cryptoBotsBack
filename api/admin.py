@@ -13,7 +13,7 @@ class DeprecatedTransaction2Admin(admin.ModelAdmin):
 class ProfitPerDayAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
 class TransactionAdmin(admin.ModelAdmin):
-    readonly_fields = ('date_time', 'id')
+    readonly_fields = ('date_time', 'id', 'transaction_profit', 'max_former_id',)
 
 admin.site.register(User, UserAdmin)
 admin.site.register(DeprecatedTransaction2, DeprecatedTransaction2Admin)

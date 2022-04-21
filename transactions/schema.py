@@ -41,7 +41,7 @@ class TransactionInput(graphene.InputObjectType):
 	bot = graphene.Field(BotInput)
 	coin = graphene.Field(CoinInput)
 	user = graphene.Field(UserInput)
-	quantity = graphene.Decimal(required=True)
+	quantity = graphene.Float(required=True)
 	bought_price = graphene.Decimal(required=False, default_value="0")
 	sell_price = graphene.Decimal(required=False, default_value="0")
 	current_price = graphene.Decimal(required=True)
