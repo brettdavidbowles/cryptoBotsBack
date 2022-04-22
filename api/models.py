@@ -76,18 +76,4 @@ class Transaction(models.Model):
 	def __str__(self):
 		return self.name
 
-	@property
-	def transaction_profit(self):
-		if self.sell_price:
-			return (self.sell_price * self.quantity) - (Transaction.objects.filter(
-				coin=self.coin).get(
-				id = max(Transaction.objects.filter(
-				coin=self.coin).id)
-			).bought_price * self.quantity)
-		if self.bought_price:
-			return ()
 	
-	@property
-	def max_former_id(self):
-		if Transaction.objects.filter(coin=self.coin):
-			return list(Transaction.objects.filter(coin=self.coin)).pop().id
