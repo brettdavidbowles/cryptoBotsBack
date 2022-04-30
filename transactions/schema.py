@@ -92,5 +92,17 @@ class CreateTransaction(graphene.Mutation):
 		# 	print(user.username + '_' + bot.name + '_' + coin.abbrev + '_' + str(datetime.date.today()))
 		return CreateTransaction(transaction=transaction)
 
+class DeleteTransaction(graphene.Mutation):
+	ok = graphene.Boolean()
+	class Arguments:
+		id = graphene.ID()
+
+	@classmethod
+	def mutate(cls, root, info, **kwargs):
+		obj = Transaction.objects.get(pk=kwargs["id"])
+		obj.delete()
+		return cls(ok=True)
+
 class Mutation(graphene.ObjectType):
-    create_transaction = CreateTransaction.Field()
+	create_transaction = CreateTransaction.Field()
+	delete_transaction = DeleteTransaction.Field()

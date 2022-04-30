@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 import uuid
 from django.conf import settings
+from decimal import *
 
 # Create your models here.
 
@@ -75,5 +76,14 @@ class Transaction(models.Model):
 
 	def __str__(self):
 		return self.name
+
+	@property
+	def transaction_profit(self):
+		if self.quantity:
+			return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
+		if self.sell_price:
+			return Transaction.objects.filter(
+				coin=self.coin
+			).len
 
 	
