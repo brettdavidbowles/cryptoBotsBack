@@ -82,10 +82,16 @@ class Transaction(models.Model):
 	def transaction_profit(self):
 		transactionArray = list(Transaction.objects.filter(
 				coin=self.coin
-			))
+			).filter(
+				bot=self.bot
+			).filter(
+				user=self.user))
 		transactionIndex = list(Transaction.objects.filter(
 				coin=self.coin
-			)).index(self)
+			).filter(
+				bot=self.bot
+			).filter(
+				user=self.user)).index(self)
 		def findLastValidTransactionIndex(startingindex):
 			if not transactionArray[transactionIndex - startingindex].quantity:
 				return findLastValidTransactionIndex(startingindex + 1)
@@ -107,14 +113,23 @@ class Transaction(models.Model):
 	def cumulative_coin_profit(self):
 		transactionIndex = list(Transaction.objects.filter(
 				coin=self.coin
-			)).index(self)
+			).filter(
+				bot=self.bot
+			).filter(
+				user=self.user)).index(self)
 		if self.sell_price:
 			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
-				coin=self.coin).exclude(
+				coin=self.coin).filter(
+				bot=self.bot
+			).filter(
+				user=self.user).exclude(
 					sell_price=0
 				))[0:transactionIndex])
 		if self.quantity:
 			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
-				coin=self.coin).exclude(
+				coin=self.coin).filter(
+				bot=self.bot
+			).filter(
+				user=self.user).exclude(
 					sell_price=0
 				))[0:transactionIndex]) + self.transaction_profit
