@@ -3,6 +3,7 @@ from django.db import models
 import uuid
 from django.conf import settings
 from decimal import *
+from django.db.models import Sum
 
 # Create your models here.
 
@@ -79,11 +80,41 @@ class Transaction(models.Model):
 
 	@property
 	def transaction_profit(self):
+		transactionArray = list(Transaction.objects.filter(
+				coin=self.coin
+			))
+		transactionIndex = list(Transaction.objects.filter(
+				coin=self.coin
+			)).index(self)
+		def findLastValidTransactionIndex(startingindex):
+			if not transactionArray[transactionIndex - startingindex].quantity:
+				return findLastValidTransactionIndex(startingindex + 1)
+			else:
+				return startingindex
+		if self.quantity and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].quantity:
+			return 0
 		if self.quantity:
 			return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
+		# if self.sell_price and transactionIndex > transactionArray.len - 1 and transactionArray[transactionIndex+1].sell_price != "0.00":
+		# 	return 9
+		if self.sell_price and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].sell_price:
+			return 0
 		if self.sell_price:
-			return Transaction.objects.filter(
-				coin=self.coin
-			).len
+			return (self.sell_price - transactionArray[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionArray[transactionIndex-findLastValidTransactionIndex(1)].quantity))
+			# return findLastValidTransactionIndex(1)
 
-	
+	@property
+	def cumulative_coin_profit(self):
+		transactionIndex = list(Transaction.objects.filter(
+				coin=self.coin
+			)).index(self)
+		if self.sell_price:
+			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+				coin=self.coin).exclude(
+					sell_price=0
+				))[0:transactionIndex])
+		if self.quantity:
+			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+				coin=self.coin).exclude(
+					sell_price=0
+				))[0:transactionIndex]) + self.transaction_profit
