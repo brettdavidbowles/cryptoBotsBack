@@ -118,18 +118,32 @@ class Transaction(models.Model):
 			).filter(
 				user=self.user)).index(self)
 		if self.sell_price:
-			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+			return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
 				coin=self.coin).filter(
 				bot=self.bot
 			).filter(
 				user=self.user).exclude(
 					sell_price=0
-				))[0:transactionIndex])
+				))[0:transactionIndex]])
+			# return Transaction.objects.filter(
+			# 	coin=self.coin).filter(
+			# 	bot=self.bot
+			# ).filter(
+			# 	user=self.user).exclude(
+			# 		sell_price=0
+			# 	)[0:transactionIndex].aggregate(Sum("transaction__transaction_profit"))
 		if self.quantity:
-			return sum(transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+			return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
 				coin=self.coin).filter(
 				bot=self.bot
 			).filter(
 				user=self.user).exclude(
 					sell_price=0
-				))[0:transactionIndex]) + self.transaction_profit
+				))[0:transactionIndex]]) + self.transaction_profit
+			# return Transaction.objects.filter(
+			# 	coin=self.coin).filter(
+			# 	bot=self.bot
+			# ).filter(
+			# 	user=self.user).exclude(
+			# 		sell_price=0
+			# 	)[0:transactionIndex].aggregate(Sum("transaction_profit")) + self.transaction_profit
