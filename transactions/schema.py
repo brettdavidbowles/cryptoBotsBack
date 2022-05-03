@@ -10,11 +10,13 @@ from coins.schema import CoinInput
 from users.schema import UserInput
 
 class TransactionType(DjangoObjectType):
-    change_in_total = graphene.Float(source="change_in_total")
+		transaction_profit = graphene.Float(source="transaction_profit")
+		cumulative_coin_profit = graphene.Float(source="cumulative_coin_profit")
+		
 
-    class Meta:
-        model = Transaction
-        fields = "__all__"
+		class Meta:
+				model = Transaction
+				fields = "__all__"
 
 class Query(graphene.ObjectType):
 	transactions = graphene.List(TransactionType)
