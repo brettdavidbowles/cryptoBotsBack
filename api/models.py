@@ -81,69 +81,75 @@ class Transaction(models.Model):
 	@property
 	def transaction_profit(self):
 		transactionArray = list(Transaction.objects.filter(
+				bot=self.bot,
+			).filter(
 				coin=self.coin
 			).filter(
-				bot=self.bot
-			).filter(
-				user=self.user))
-		transactionIndex = list(Transaction.objects.filter(
-				coin=self.coin
-			).filter(
-				bot=self.bot
-			).filter(
-				user=self.user)).index(self)
+				user=self.user
+			).order_by(
+				'date_time'
+			)
+			)
+		transactionIndex = transactionArray.index(self)
 		def findLastValidTransactionIndex(startingindex):
 			if not transactionArray[transactionIndex - startingindex].quantity:
 				return findLastValidTransactionIndex(startingindex + 1)
 			else:
 				return startingindex
+
+
+		# return transactionIndex
 		if self.quantity and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].quantity:
 			return 0
 		if self.quantity:
 			return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
+
+
+			# skip this one?
 		# if self.sell_price and transactionIndex > transactionArray.len - 1 and transactionArray[transactionIndex+1].sell_price != "0.00":
 		# 	return 9
+
+
 		if self.sell_price and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].sell_price:
 			return 0
 		if self.sell_price:
 			return (self.sell_price - transactionArray[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionArray[transactionIndex-findLastValidTransactionIndex(1)].quantity))
-			# return findLastValidTransactionIndex(1)
 
-	@property
-	def cumulative_coin_profit(self):
-		transactionIndex = list(Transaction.objects.filter(
-				coin=self.coin
-			).filter(
-				bot=self.bot
-			).filter(
-				user=self.user)).index(self)
-		if self.sell_price:
-			return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
-				coin=self.coin).filter(
-				bot=self.bot
-			).filter(
-				user=self.user).exclude(
-					sell_price=0
-				))[0:transactionIndex]])
-			# return Transaction.objects.filter(
-			# 	coin=self.coin).filter(
-			# 	bot=self.bot
-			# ).filter(
-			# 	user=self.user).exclude(
-			# 		sell_price=0
-			# 	)[0:transactionIndex].aggregate(Sum("transaction__transaction_profit"))
-		if self.quantity:
-			return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
-				coin=self.coin).filter(
-				bot=self.bot
-			).filter(
-				user=self.user).exclude(
-					sell_price=0
-				))[0:transactionIndex]]) + self.transaction_profit
-			# return Transaction.objects.filter(
-			# 	coin=self.coin).filter(
-			# 	bot=self.bot
-			# ).filter(
-			# 	user=self.user).exclude(
-			# 		sell_price=0
-			# 	)[0:transactionIndex].aggregate(Sum("transaction_profit")) + self.transaction_profit
+	# @property
+	# def cumulative_coin_profit(self):
+	# 	transactionIndex = list(Transaction.objects.filter(
+	# 			coin=self.coin
+	# 		).filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			user=self.user)).index(self)
+	# 	if self.sell_price:
+	# 		return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+	# 			coin=self.coin).filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			user=self.user).exclude(
+	# 				sell_price=0
+	# 			))[0:transactionIndex]])
+	# 		return Transaction.objects.filter(
+	# 			coin=self.coin).filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			user=self.user).exclude(
+	# 				sell_price=0
+	# 			)[0:transactionIndex].aggregate(Sum("transaction__transaction_profit"))
+	# 	if self.quantity:
+	# 		return sum([transaction.transaction_profit for transaction in list(Transaction.objects.filter(
+	# 			coin=self.coin).filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			user=self.user).exclude(
+	# 				sell_price=0
+	# 			))[0:transactionIndex]]) + self.transaction_profit
+	# 		return Transaction.objects.filter(
+	# 			coin=self.coin).filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			user=self.user).exclude(
+	# 				sell_price=0
+	# 			)[0:transactionIndex].aggregate(Sum("transaction_profit")) + self.transaction_profit
