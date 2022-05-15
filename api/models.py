@@ -88,8 +88,7 @@ class Transaction(models.Model):
 				user=self.user
 			).order_by(
 				'date_time'
-			)
-			)
+			))
 		transactionIndex = transactionArray.index(self)
 		def findLastValidTransactionIndex(startingindex):
 			if not transactionArray[transactionIndex - startingindex].quantity:
@@ -114,6 +113,34 @@ class Transaction(models.Model):
 			return 0
 		if self.sell_price:
 			return (self.sell_price - transactionArray[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionArray[transactionIndex-findLastValidTransactionIndex(1)].quantity))
+
+	
+	@property
+	def market_cumulative_profit(self):
+		transactionArray = list(Transaction.objects.filter(
+				bot=self.bot,
+			).filter(
+				coin=self.coin
+			).filter(
+				user=self.user
+			).order_by(
+				'date_time'
+			))
+		return self.current_price - transactionArray[0].current_price
+
+	@property
+	def market_percent_profit(self):
+
+		transactionArray = list(Transaction.objects.filter(
+				bot=self.bot,
+			).filter(
+				coin=self.coin
+			).filter(
+				user=self.user
+			).order_by(
+				'date_time'
+			))
+		return (self.current_price - transactionArray[0].current_price)/transactionArray[0].current_price
 
 	# @property
 	# def cumulative_coin_profit(self):

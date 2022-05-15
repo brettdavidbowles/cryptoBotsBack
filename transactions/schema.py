@@ -11,7 +11,9 @@ from users.schema import UserInput
 
 class TransactionType(DjangoObjectType):
 		transaction_profit = graphene.Float(source="transaction_profit")
-		cumulative_coin_profit = graphene.Float(source="cumulative_coin_profit")
+		# cumulative_coin_profit = graphene.Float(source="cumulative_coin_profit")
+		market_cumulative_profit = graphene.Float(source="market_cumulative_profit")
+		market_percent_profit = graphene.Float(source="market_percent_profit")
 		
 
 		class Meta:
@@ -37,7 +39,11 @@ class Query(graphene.ObjectType):
     
 	def resolve_transactions_by_bot_and_coin(self, info, bot_name = None, coin_abbrev = None, **kwargs):
 		if bot_name and coin_abbrev:
-			return Transaction.objects.filter(bot__name=bot_name, coin__abbrev=coin_abbrev)
+			return Transaction.objects.filter(
+				bot__name=bot_name, coin__abbrev=coin_abbrev
+				).order_by(
+					'date_time'
+				)
 
 class TransactionInput(graphene.InputObjectType):
 	bot = graphene.Field(BotInput)
