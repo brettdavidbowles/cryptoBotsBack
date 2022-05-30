@@ -64,6 +64,47 @@ class ProfitPerDay(models.Model):
 	def __str__(self):
 		return self.name
 
+
+# def getFilteredTransactionList(self):
+# 	return list(Transaction.objects.filter(
+# 		bot=self.bot
+# 			).filter(
+# 				coin=self.coin
+# 			).filter(
+# 				user=self.user
+# 			).order_by(
+# 				'date_time'
+# 			)
+# 			)
+
+class TransactionQuerySet(models.QuerySet):
+	def transactions(self):
+		return self.select_related().filter(
+			bot=self.bot
+			).filter(
+				coin=self.coin
+			).filter(
+				user=self.user
+			).order_by('date_time')
+
+class TransactionManager(models.Manager):
+	def get_queryset(self):
+		return TransactionQuerySet(self)
+		# bot=self.bot
+		# 	).filter(
+		# 		coin=self.coin
+		# 	).filter(
+		# 		user=self.user
+		# 	).order_by('date_time')
+			# )
+		# return super().get_queryset().select_related(
+		# 	'bot', 'coin', 'user'	
+				# ).order_by(
+				# 	'date_time'
+				# )
+				
+
+
 class Transaction(models.Model):
 	bot = models.ForeignKey(Bot, on_delete=models.SET_NULL, null=True)
 	coin = models.ForeignKey(Coin, on_delete=models.SET_NULL, null=True)
@@ -74,73 +115,156 @@ class Transaction(models.Model):
 	current_price = models.DecimalField(max_digits=16, decimal_places=2)
 	date_time = models.DateTimeField(auto_now_add=True)
 	name = models.CharField(max_length=200, default='default')
+	objects = models.Manager()
+	managed_objects = TransactionManager()
 
 	def __str__(self):
 		return self.name
 
-	@property
-	def transaction_profit(self):
-		transactionArray = list(Transaction.objects.filter(
-				bot=self.bot,
-			).filter(
-				coin=self.coin
-			).filter(
-				user=self.user
-			).order_by(
-				'date_time'
-			))
-		transactionIndex = transactionArray.index(self)
-		def findLastValidTransactionIndex(startingindex):
-			if not transactionArray[transactionIndex - startingindex].quantity:
-				return findLastValidTransactionIndex(startingindex + 1)
-			else:
-				return startingindex
+	# @property
+	# def bought_date_time(self):
+	# 	if self.quantity:
+	# 		return self.date_time
+	# 	else:
+	# 		boughtdate = "undefined"
+	# 		queryset = Transaction.objects.select_related('bot', 'coin', 'user').filter(
+	# 													bot_id=self.bot_id,
+	# 												).filter(
+	# 													coin_id=self.coin_id
+	# 												).filter(
+	# 													user_id=self.user_id
+	# 												).order_by('date_time')
+	# 		transactionList = list(queryset)
+	# 		index = transactionList.index(self)
+	# 		while boughtdate == "undefined":
+	# 			if index > 0 and transactionList[index - 1].sell_price > 0:
+	# 				index = index - 1
+	# 				print('ok')
+	# 			else:
+	# 				boughtdate = transactionList[index -1].date_time
+	# 				print(boughtdate)
+	# 		return boughtdate
 
 
-		# return transactionIndex
-		if self.quantity and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].quantity:
-			return 0
-		if self.quantity:
-			return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
+	# @property
+	# def sell_date_time(self):
+	# 	queryset = Transaction.objects.select_related('bot', 'coin', 'user').filter(
+	# 													bot_id=self.bot_id,
+	# 												).filter(
+	# 													coin_id=self.coin_id
+	# 												).filter(
+	# 													user_id=self.user_id
+	# 												).order_by('date_time')
+	# 	transactionList = list(queryset)
+	# 	transactionIndex = transactionList.index(self)
+	# 	transactionListFromCurrentTransaction = transactionList[transactionIndex:]
+	# 	index = 1
+	# 	while index < (len(transactionListFromCurrentTransaction) - 1):
+	# 		if(transactionListFromCurrentTransaction[index].sell_price > 0 and transactionListFromCurrentTransaction[index + 1].sell_price > 0):
+	# 			transactionListFromCurrentTransaction.pop(index)
+	# 		else:
+	# 			index = index + 1
+	# 	if self.quantity:
+	# 		return transactionListFromCurrentTransaction[1].date_time
+	# 	else:
+	# 		return self.date_time
+
+	# @property
+	# def transaction_profit(self):
+	# 	queryset = Transaction.objects.select_related('bot', 'coin', 'user').filter(
+	# 													bot_id=self.bot_id,
+	# 												).filter(
+	# 													coin_id=self.coin_id
+	# 												).filter(
+	# 													user_id=self.user_id
+	# 												).order_by('date_time')
+	# 	transactionList = list(queryset)
+	# 	transactionIndex = transactionList.index(self)
+	# 	def findLastValidTransactionIndex(startingindex):
+	# 		if not transactionList[transactionIndex - startingindex].quantity:
+	# 			return findLastValidTransactionIndex(startingindex + 1)
+	# 		else:
+	# 			return startingindex
+
+
+		# # return transactionIndex
+		# if self.quantity and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].quantity:
+		# 	return 0
+		# if self.quantity:
+		# 	return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
 
 
 			# skip this one?
-		# if self.sell_price and transactionIndex > transactionArray.len - 1 and transactionArray[transactionIndex+1].sell_price != "0.00":
+		# if self.sell_price and transactionIndex > transactionList.len - 1 and transactionList[transactionIndex+1].sell_price != "0.00":
 		# 	return 9
 
 
-		if self.sell_price and transactionIndex < (len(transactionArray) - 1) and transactionArray[transactionIndex+1].sell_price:
-			return 0
-		if self.sell_price:
-			return (self.sell_price - transactionArray[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionArray[transactionIndex-findLastValidTransactionIndex(1)].quantity))
+		# if self.sell_price and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].sell_price:
+		# 	return 0
+		# if self.sell_price:
+		# 	return (self.sell_price - transactionList[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionList[transactionIndex-findLastValidTransactionIndex(1)].quantity))
 
 	
-	@property
-	def market_cumulative_profit(self):
-		transactionArray = list(Transaction.objects.filter(
-				bot=self.bot,
-			).filter(
-				coin=self.coin
-			).filter(
-				user=self.user
-			).order_by(
-				'date_time'
-			))
-		return self.current_price - transactionArray[0].current_price
+	# @property
+	# def market_cumulative_profit(self):
+	# 	queryset = Transaction.objects.select_related().filter(
+	# 													bot_id=self.bot_id,
+	# 												).filter(
+	# 													coin_id=self.coin_id
+	# 												).filter(
+	# 													user_id=self.user_id
+	# 												).order_by('date_time')
+	# 	transactionList = list(queryset)
+	# 	return self.current_price - transactionList[0].current_price
+		
 
-	@property
-	def market_percent_profit(self):
+	# @property
+	# def market_percent_profit(self):
 
-		transactionArray = list(Transaction.objects.filter(
-				bot=self.bot,
-			).filter(
-				coin=self.coin
-			).filter(
-				user=self.user
-			).order_by(
-				'date_time'
-			))
-		return (self.current_price - transactionArray[0].current_price)/transactionArray[0].current_price
+	# 	queryset = Transaction.objects.select_related().filter(
+	# 													bot_id=self.bot_id,
+	# 												).filter(
+	# 													coin_id=self.coin_id
+	# 												).filter(
+	# 													user_id=self.user_id
+	# 												).order_by('date_time')
+	# 	transactionList = list(queryset)
+	# 	return (self.current_price - transactionList[0].current_price)/transactionList[0].current_price
+
+	# @property
+	# def table_row(self):
+	# 	transactionList = Transaction.objects.filter(
+	# 			bot=self.bot
+	# 		).filter(
+	# 			coin=self.coin
+	# 		).filter(
+	# 			user=self.user
+	# 		).order_by(
+	# 			'date_time'
+	# 		)
+	# 	transactionIndex = transactionList.index(self)
+	# 	nextTransactionIndex = transactionList.index(self) + 1
+	# 	transactionListSansFailedTransactions = transactionList.exclude(
+	# 		transactionList[transactionIndex].quantity == 0 and transactionList[nextTransactionIndex] ==0
+	# 	)
+	# 	transactionObject = transactionList[transactionIndex]
+		# get_next_by_publish_date(publish_date__isnull=False)
+		# nextEntry = transactionList[transactionIndex].get_next_by_date_time().id
+		# transactionListWithoutFailedRows = transactionList.exclude(
+		# 	self.quantity == 0 and nextEntry.quantity == 0
+		# )
+		# transactionList = list(Transaction.objects.filter(
+		# 		bot=self.bot,
+		# 	).filter(
+		# 		coin=self.coin
+		# 	).filter(
+		# 		user=self.user
+		# 	).order_by(
+		# 		'date_time'
+		# 	).exclude(
+		# 	self.quantity == 0 and nextEntry.quantity == 0
+		# ))
+		# return transactionList[transactionIndex].get_next_by_date_time()
 
 	# @property
 	# def cumulative_coin_profit(self):
@@ -180,3 +304,15 @@ class Transaction(models.Model):
 	# 			user=self.user).exclude(
 	# 				sell_price=0
 	# 			)[0:transactionIndex].aggregate(Sum("transaction_profit")) + self.transaction_profit
+
+class TransactionCalculations(models.Model):
+	transaction = models.OneToOneField(
+			Transaction,
+			on_delete=models.RESTRICT,
+			primary_key=True,
+	)
+	transaction_profit = models.FloatField(null=True)
+	cumulative_profit = models.FloatField(null=True)
+	transaction_profit_margin = models.FloatField(null=True)
+	cumulative_profit_margin = models.FloatField(null=True)
+	market_profit_margin = models.FloatField(null=True)

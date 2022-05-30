@@ -1,10 +1,11 @@
 from django.contrib import admin
-from .models import User, Bot, Coin, DeprecatedTransaction2, ProfitPerDay, Transaction
+from .models import User, Bot, Coin, DeprecatedTransaction2, ProfitPerDay, Transaction, TransactionCalculations
 
 # Register your models here.
 
 admin.site.register(Bot)
 admin.site.register(Coin)
+admin.site.register(TransactionCalculations)
 
 class UserAdmin(admin.ModelAdmin):
     readonly_fields = ('api_key',)
@@ -13,7 +14,8 @@ class DeprecatedTransaction2Admin(admin.ModelAdmin):
 class ProfitPerDayAdmin(admin.ModelAdmin):
     readonly_fields = ('date',)
 class TransactionAdmin(admin.ModelAdmin):
-    readonly_fields = ('date_time', 'id', 'transaction_profit', 'market_cumulative_profit', 'market_percent_profit',)
+    readonly_fields = ('date_time', 'id',)
+
 
 admin.site.register(User, UserAdmin)
 admin.site.register(DeprecatedTransaction2, DeprecatedTransaction2Admin)

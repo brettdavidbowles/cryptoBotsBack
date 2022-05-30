@@ -10,6 +10,7 @@ import bots.schema
 import coins.schema
 import transactions.schema
 import profits.schema
+import transactionCalculations.schema
 
 from graphene_django.debug import DjangoDebug
 
@@ -17,7 +18,7 @@ class Query(graphene.ObjectType):
     debug = graphene.Field(DjangoDebug, name="_debug")
 
     
-class Mutation(users.schema.Mutation, transactions.schema.Mutation, graphene.ObjectType):
+class Mutation(users.schema.Mutation, transactions.schema.Mutation, transactionCalculations.schema.Mutation, graphene.ObjectType):
     token_auth = graphql_jwt.ObtainJSONWebToken.Field()
     verify_token = graphql_jwt.Verify.Field()
     refresh_token = graphql_jwt.Refresh.Field()
