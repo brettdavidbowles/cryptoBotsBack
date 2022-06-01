@@ -313,6 +313,8 @@ class TransactionCalculations(models.Model):
 	)
 	transaction_profit = models.FloatField(null=True)
 	cumulative_profit = models.FloatField(null=True)
+	transaction_expense = models.FloatField(null=True)
+	cumulative_expense = models.FloatField(null=True)
 	transaction_profit_margin = models.FloatField(null=True)
 	cumulative_profit_margin = models.FloatField(null=True)
 	market_profit_margin = models.FloatField(null=True)

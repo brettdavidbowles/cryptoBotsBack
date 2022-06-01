@@ -12,6 +12,8 @@ class TransactionCalculationsInput(graphene.InputObjectType):
   transaction = graphene.Field(TransactionInputById)
   transaction_profit = graphene.Float()
   cumulative_profit = graphene.Float()
+  transaction_expense = graphene.Float()
+  cumulative_expense = graphene.Float()
   transaction_profit_margin = graphene.Float()
   cumulative_profit_margin = graphene.Float()
   market_profit_margin = graphene.Float()
@@ -32,6 +34,8 @@ class CreateTransactionCalculations(graphene.Mutation):
       transaction=transaction,
       transaction_profit = input_data.transaction_profit,
       cumulative_profit = input_data.cumulative_profit,
+      transaction_expense = input_data.transaction_expense,
+      cumulative_expense = input_data.cumulative_expense,
       transaction_profit_margin = input_data.transaction_profit_margin,
       cumulative_profit_margin = input_data.cumulative_profit_margin,
       market_profit_margin = input_data.market_profit_margin,      
