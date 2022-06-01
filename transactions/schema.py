@@ -158,32 +158,31 @@ class CreateTransaction(graphene.Mutation):
 			while not lastBoughtTransactionFound:
 				if filteredTransactionList[lastBoughtTransactionIndex].quantity:
 					transaction_profit = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) * filteredTransactionList[lastBoughtTransactionIndex].quantity
+					
 					if len(filteredTransactionList) == 2:
 						cumulative_profit = transaction_profit
 					else:
 						cumulative_profit = transaction_profit + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_profit
-					transaction_profit_margin = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) / float(input_data.sell_price)
 					
-					profitMargins = []
-					for t in filteredTransactionList:
-						if t.sell_price:
-							print(t.id)
-							# print(TransactionCalculations.objects.get(transaction__id=t.id))
-							try:
-								associatedCalculation = TransactionCalculations.objects.get(transaction__id=t.id)
-								profitMargins.append(associatedCalculation.transaction_profit_margin)
-							except TransactionCalculations.DoesNotExist:
-								print(t.id)
-					profitMargins.append(transaction_profit_margin)
-					# print(profitMargins)
-					cumulative_profit_margin = statistics.fmean(profitMargins)
-					# cumulative_profit_margin = 55555
+					transaction_profit_margin = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) / float(input_data.sell_price)
+
+					transaction_expense = float(filteredTransactionList[lastBoughtTransactionIndex].bought_price) * filteredTransactionList[lastBoughtTransactionIndex].quantity
+					
+					if len(filteredTransactionList) == 2:
+						cumulative_expense = transaction_expense
+					else:
+						cumulative_expense = transaction_expense + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_expense
+
+					cumulative_profit_margin = cumulative_profit / cumulative_expense
+
 					market_profit_margin = (input_data.current_price - filteredTransactionList[0].current_price) / input_data.current_price
 
 					NewTransactionCalculation = TransactionCalculations(
 						transaction=transaction,
 						transaction_profit=transaction_profit,
 						cumulative_profit=cumulative_profit,
+						transaction_expense=transaction_expense,
+						cumulative_expense=cumulative_expense,
 						transaction_profit_margin=transaction_profit_margin,
 						cumulative_profit_margin=cumulative_profit_margin,
 						market_profit_margin=market_profit_margin
@@ -192,15 +191,11 @@ class CreateTransaction(graphene.Mutation):
 					lastBoughtTransactionFound = True
 				else:
 					invalidTransaction = Transaction.objects.get(id = filteredTransactionList[lastBoughtTransactionIndex].id)
-
 					try:
-						# print(TransactionCalculations.objects.get(transaction=invalidTransaction))
 						TransactionCalculations.objects.get(transaction=invalidTransaction).delete()
 					except TransactionCalculations.DoesNotExist:
 						print('transaction calcs DNE, something is wrong')
 					lastBoughtTransactionIndex = lastBoughtTransactionIndex - 1
-					# print(lastBoughtTransactionIndex)
-					# print(filteredTransactionList[lastBoughtTransactionIndex].id)
 			
 
 
