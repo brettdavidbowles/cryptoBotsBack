@@ -169,29 +169,29 @@ class Transaction(models.Model):
 	# 	else:
 	# 		return self.date_time
 
-	# @property
-	# def transaction_profit(self):
-	# 	queryset = Transaction.objects.select_related('bot', 'coin', 'user').filter(
-	# 													bot_id=self.bot_id,
-	# 												).filter(
-	# 													coin_id=self.coin_id
-	# 												).filter(
-	# 													user_id=self.user_id
-	# 												).order_by('date_time')
-	# 	transactionList = list(queryset)
-	# 	transactionIndex = transactionList.index(self)
-	# 	def findLastValidTransactionIndex(startingindex):
-	# 		if not transactionList[transactionIndex - startingindex].quantity:
-	# 			return findLastValidTransactionIndex(startingindex + 1)
-	# 		else:
-	# 			return startingindex
+	@property
+	def transaction_profit(self):
+		queryset = Transaction.objects.select_related('bot', 'coin', 'user').filter(
+														bot_id=self.bot_id,
+													).filter(
+														coin_id=self.coin_id
+													).filter(
+														user_id=self.user_id
+													).order_by('date_time')
+		transactionList = list(queryset)
+		transactionIndex = transactionList.index(self)
+		def findLastValidTransactionIndex(startingindex):
+			if not transactionList[transactionIndex - startingindex].quantity:
+				return findLastValidTransactionIndex(startingindex + 1)
+			else:
+				return startingindex
 
 
 		# # return transactionIndex
-		# if self.quantity and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].quantity:
-		# 	return 0
-		# if self.quantity:
-		# 	return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
+		if self.quantity and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].quantity:
+			return 0
+		if self.quantity:
+			return (self.current_price - self.bought_price) * Decimal(str(self.quantity))
 
 
 			# skip this one?
@@ -199,37 +199,37 @@ class Transaction(models.Model):
 		# 	return 9
 
 
-		# if self.sell_price and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].sell_price:
-		# 	return 0
-		# if self.sell_price:
-		# 	return (self.sell_price - transactionList[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionList[transactionIndex-findLastValidTransactionIndex(1)].quantity))
+		if self.sell_price and transactionIndex < (len(transactionList) - 1) and transactionList[transactionIndex+1].sell_price:
+			return 0
+		if self.sell_price:
+			return (self.sell_price - transactionList[transactionIndex-findLastValidTransactionIndex(1)].bought_price) * Decimal(str(transactionList[transactionIndex-findLastValidTransactionIndex(1)].quantity))
 
 	
-	# @property
-	# def market_cumulative_profit(self):
-	# 	queryset = Transaction.objects.select_related().filter(
-	# 													bot_id=self.bot_id,
-	# 												).filter(
-	# 													coin_id=self.coin_id
-	# 												).filter(
-	# 													user_id=self.user_id
-	# 												).order_by('date_time')
-	# 	transactionList = list(queryset)
-	# 	return self.current_price - transactionList[0].current_price
+	@property
+	def market_cumulative_profit(self):
+		queryset = Transaction.objects.select_related().filter(
+														bot_id=self.bot_id,
+													).filter(
+														coin_id=self.coin_id
+													).filter(
+														user_id=self.user_id
+													).order_by('date_time')
+		transactionList = list(queryset)
+		return self.current_price - transactionList[0].current_price
 		
 
-	# @property
-	# def market_percent_profit(self):
+	@property
+	def market_percent_profit(self):
 
-	# 	queryset = Transaction.objects.select_related().filter(
-	# 													bot_id=self.bot_id,
-	# 												).filter(
-	# 													coin_id=self.coin_id
-	# 												).filter(
-	# 													user_id=self.user_id
-	# 												).order_by('date_time')
-	# 	transactionList = list(queryset)
-	# 	return (self.current_price - transactionList[0].current_price)/transactionList[0].current_price
+		queryset = Transaction.objects.select_related().filter(
+														bot_id=self.bot_id,
+													).filter(
+														coin_id=self.coin_id
+													).filter(
+														user_id=self.user_id
+													).order_by('date_time')
+		transactionList = list(queryset)
+		return (self.current_price - transactionList[0].current_price)/transactionList[0].current_price
 
 	# @property
 	# def table_row(self):
