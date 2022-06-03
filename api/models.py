@@ -311,6 +311,8 @@ class TransactionCalculations(models.Model):
 			on_delete=models.RESTRICT,
 			primary_key=True,
 	)
+	transaction_revenue = models.FloatField(null=True)
+	cumulative_revenue = models.FloatField(null=True)
 	transaction_profit = models.FloatField(null=True)
 	cumulative_profit = models.FloatField(null=True)
 	transaction_expense = models.FloatField(null=True)
