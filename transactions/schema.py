@@ -157,6 +157,14 @@ class CreateTransaction(graphene.Mutation):
 		if input_data.sell_price:
 			while not lastBoughtTransactionFound:
 				if filteredTransactionList[lastBoughtTransactionIndex].quantity:
+					
+					transaction_revenue = float(input_data.sell_price) * filteredTransactionList[lastBoughtTransactionIndex].quantity
+
+					if len(filteredTransactionList) == 2:
+						cumulative_revenue = transaction_revenue
+					else:
+						cumulative_revenue = transaction_revenue + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_revenue
+
 					transaction_profit = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) * filteredTransactionList[lastBoughtTransactionIndex].quantity
 					
 					if len(filteredTransactionList) == 2:
@@ -173,12 +181,14 @@ class CreateTransaction(graphene.Mutation):
 					else:
 						cumulative_expense = transaction_expense + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_expense
 
-					cumulative_profit_margin = cumulative_profit / cumulative_expense
+					cumulative_profit_margin = cumulative_profit / cumulative_revenue
 
 					market_profit_margin = (input_data.current_price - filteredTransactionList[0].current_price) / input_data.current_price
 
 					NewTransactionCalculation = TransactionCalculations(
 						transaction=transaction,
+						transaction_revenue=transaction_revenue,
+						cumulative_revenue=cumulative_revenue,
 						transaction_profit=transaction_profit,
 						cumulative_profit=cumulative_profit,
 						transaction_expense=transaction_expense,

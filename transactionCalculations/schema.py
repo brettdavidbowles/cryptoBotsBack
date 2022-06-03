@@ -10,6 +10,8 @@ class TransactionCalculationsType(DjangoObjectType):
 
 class TransactionCalculationsInput(graphene.InputObjectType):
   transaction = graphene.Field(TransactionInputById)
+  transaction_revenue = graphene.Float()
+  cumulative_revenue = graphene.Float()
   transaction_profit = graphene.Float()
   cumulative_profit = graphene.Float()
   transaction_expense = graphene.Float()
@@ -32,6 +34,8 @@ class CreateTransactionCalculations(graphene.Mutation):
     transaction = Transaction.objects.get(id=input_data.transaction.id)
     transactionCalculations = TransactionCalculations.objects.create(
       transaction=transaction,
+      transaction_revenue = input_data.transaction_revenue,
+      cumulative_revenue = input_data.cumulative_revenue,
       transaction_profit = input_data.transaction_profit,
       cumulative_profit = input_data.cumulative_profit,
       transaction_expense = input_data.transaction_expense,
