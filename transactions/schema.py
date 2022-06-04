@@ -181,7 +181,13 @@ class CreateTransaction(graphene.Mutation):
 					else:
 						cumulative_expense = transaction_expense + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_expense
 
-					cumulative_profit_margin = cumulative_profit / cumulative_revenue
+					highestValueSpent = 0
+					for i in filteredTransactionList:
+						if i.quantity * float(i.bought_price) > highestValueSpent:
+							highestValueSpent = i.quantity * float(i.bought_price)
+
+
+					cumulative_profit_margin = cumulative_profit / ( highestValueSpent + cumulative_profit )
 
 					market_profit_margin = (input_data.current_price - filteredTransactionList[0].current_price) / input_data.current_price
 
