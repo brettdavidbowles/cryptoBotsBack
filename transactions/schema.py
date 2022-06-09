@@ -44,7 +44,7 @@ class Query(graphene.ObjectType):
 			# )
 		
 
-			transactionArray = list(Transaction.objects.filter(
+			transactionList = list(Transaction.objects.filter(
 				bot__name=bot_name
 			).filter(
 				coin__abbrev=coin_abbrev
@@ -54,28 +54,28 @@ class Query(graphene.ObjectType):
 				'date_time'
 			))
 
-			# transactionIndex = transactionArray.index(self)
-			# nextTransactionIndex = transactionArray.index(self) + 1
-			# return transactionArray.exclude(
-			# 	transactionArray[transactionIndex].quantity == 0 and transactionArray[nextTransactionIndex] ==0
+			# transactionIndex = transactionList.index(self)
+			# nextTransactionIndex = transactionList.index(self) + 1
+			# return transactionList.exclude(
+			# 	transactionList[transactionIndex].quantity == 0 and transactionList[nextTransactionIndex] ==0
 			# )
-			# for idx, x in enumerate(transactionArray):
-			# 	if idx < (len(transactionArray) -1):
-			# 		if x.quantity == 0 and transactionArray[idx + 1].quantity == 0:
-			# 			transactionArray.pop(idx)
+			# for idx, x in enumerate(transactionList):
+			# 	if idx < (len(transactionList) -1):
+			# 		if x.quantity == 0 and transactionList[idx + 1].quantity == 0:
+			# 			transactionList.pop(idx)
 			index = 0
-			while index < (len(transactionArray) -1):
-				if (transactionArray[index].quantity == 0 and transactionArray[index + 1].quantity == 0) or (transactionArray[index].sell_price == 0.00 and transactionArray[index + 1].sell_price == 0):
-						transactionArray.pop(index)
+			while index < (len(transactionList) -1):
+				if (transactionList[index].quantity == 0 and transactionList[index + 1].quantity == 0) or (transactionList[index].sell_price == 0.00 and transactionList[index + 1].sell_price == 0):
+						transactionList.pop(index)
 				else:
 					index = index + 1
 			# index = 0
-			# while index < (len(transactionArray) -1):
-			# 	if transactionArray[index].quantity:
-			# 		transactionArray[index].sell_price = transactionArray[index + 1].sell_price
+			# while index < (len(transactionList) -1):
+			# 	if transactionList[index].quantity:
+			# 		transactionList[index].sell_price = transactionList[index + 1].sell_price
 			# 	index = index + 1
 
-			return transactionArray
+			return transactionList
 
 
 	def resolve_transactions(self, info, **kwargs):
@@ -172,7 +172,7 @@ class CreateTransaction(graphene.Mutation):
 					else:
 						cumulative_profit = transaction_profit + filteredTransactionList[lastBoughtTransactionIndex - 1].transactioncalculations.cumulative_profit
 					
-					transaction_profit_margin = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) / float(input_data.sell_price)
+					transaction_profit_margin = (float(input_data.sell_price) - float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)) / float(filteredTransactionList[lastBoughtTransactionIndex].bought_price)
 
 					transaction_expense = float(filteredTransactionList[lastBoughtTransactionIndex].bought_price) * filteredTransactionList[lastBoughtTransactionIndex].quantity
 					
@@ -187,9 +187,9 @@ class CreateTransaction(graphene.Mutation):
 							highestValueSpent = i.quantity * float(i.bought_price)
 
 
-					cumulative_profit_margin = cumulative_profit / ( highestValueSpent + cumulative_profit )
+					cumulative_profit_margin = cumulative_profit / highestValueSpent
 
-					market_profit_margin = (input_data.current_price - filteredTransactionList[0].current_price) / input_data.current_price
+					market_profit_margin = (input_data.current_price - filteredTransactionList[0].current_price) / filteredTransactionList[0].current_price
 
 					NewTransactionCalculation = TransactionCalculations(
 						transaction=transaction,
@@ -213,32 +213,6 @@ class CreateTransaction(graphene.Mutation):
 						print('transaction calcs DNE, something is wrong')
 					lastBoughtTransactionIndex = lastBoughtTransactionIndex - 1
 			
-
-
-		
-
-		# ProfitObject = ProfitPerDay.objects.filter(
-		# 								bot=bot
-		# 							).filter(
-		# 								coin=coin
-		# 							).filter(
-		# 								user=user
-		# 							).filter(
-		# 								date=datetime.date.today()
-		# 							)
-		# if ProfitObject:
-		# 	ProfitObject[0].profit += input_data.profit
-		# 	ProfitObject[0].save()
-		# else:
-		# 	NewProfitObject = ProfitPerDay(
-		# 		bot=bot,
-		# 		coin=coin,
-		# 		user=user,
-		# 		profit=input_data.profit,
-		# 		name=user.username + '_' + bot.name + '_' + coin.abbrev + '_' + str(datetime.date.today())
-		# 	)
-		# 	NewProfitObject.save()
-		# 	print(user.username + '_' + bot.name + '_' + coin.abbrev + '_' + str(datetime.date.today()))
 		return CreateTransaction(transaction=transaction)
 
 class DeleteTransaction(graphene.Mutation):
