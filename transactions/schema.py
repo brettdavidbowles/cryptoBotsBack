@@ -1,7 +1,7 @@
-import re
 import graphene
 from graphene_django import DjangoObjectType
 import statistics
+from graphql import GraphQLError
 
 import datetime
 
@@ -53,6 +53,10 @@ class Query(graphene.ObjectType):
 			).order_by(
 				'date_time'
 			))
+
+			if not len(transactionList):
+				print('ladskjflaksdj')
+				raise GraphQLError('Table Data does not exist')
 
 			# transactionIndex = transactionList.index(self)
 			# nextTransactionIndex = transactionList.index(self) + 1
