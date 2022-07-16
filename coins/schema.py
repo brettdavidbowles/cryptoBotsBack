@@ -15,9 +15,14 @@ class CoinType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
 	coins = graphene.List(CoinType)
+	coins_by_bot = graphene.List(CoinType, bot_name=graphene.String())
 	
 	def resolve_coins(self, info, **kwargs):
 		return Coin.objects.all()
+    
+	def resolve_coins_by_bot(self, info, bot_name = None):
+		if bot_name:
+			return Coin.objects.filter(bot__name=bot_name)
 
 class CoinInput(graphene.InputObjectType):
 	abbrev = graphene.String(required=True)
