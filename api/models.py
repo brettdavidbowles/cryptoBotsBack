@@ -27,6 +27,7 @@ class Coin(models.Model):
 	name = models.CharField(max_length=200)
 	abbrev = models.CharField(max_length=200)
 	user = models.ManyToManyField(settings.AUTH_USER_MODEL)
+	bot = models.ManyToManyField(Bot)
 	def __str__(self):
 		return self.name
 
