@@ -46,17 +46,5 @@ class CreateTransactionCalculations(graphene.Mutation):
     )
     return CreateTransactionCalculations(transactionCalculations=transactionCalculations)
 
-# class CreateTransactionProfit(graphene.Mutation):
-#   TransactionCalculations = graphene.Field(TransactionCalculationsType)
-#   class Arguments:
-#     input_data = TransactionProfitInput
-#   @staticmethod
-#   def mutate(root, info, input_data):
-#     transaction = Transaction.objects.get(id=input_data.transaction.id)
-#     transactionCalculations = TransactionCalculations.objects.create(
-#       transaction=transaction
-#       transaction_profit = input_data.transaction_profit
-#     )
-
 class Mutation(graphene.ObjectType):
   create_transaction_calculations = CreateTransactionCalculations.Field()
