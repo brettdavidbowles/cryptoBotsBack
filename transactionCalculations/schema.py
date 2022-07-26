@@ -60,3 +60,21 @@ class CreateTransactionCalculations(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
   create_transaction_calculations = CreateTransactionCalculations.Field()
+
+class Query(graphene.ObjectType):
+  bar_chart_data = graphene.List(TransactionCalculationsType, bot_name=graphene.String(), username=graphene.String())
+  def resolve_bar_chart_data(self, info, bot_name=None, username=None,):
+    if bot_name and username:
+      FilteredQuerySet = Transaction.objects.select_related().filter(
+        bot__name=bot_name
+      ).filter(
+        user__username=username
+      )
+      coins = list(Coin.objects.select_related().filter(
+        bot__name=bot_name
+      ))
+      FilteredQueryList = list(FilteredQuerySet)
+      for i in coins:
+
+      print(coins)
+      return FilteredQuerySet
