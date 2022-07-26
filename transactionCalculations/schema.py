@@ -1,6 +1,6 @@
 import graphene
 from graphene_django import DjangoObjectType
-from api.models import TransactionCalculations, Transaction
+from api.models import TransactionCalculations, Transaction, Coin
 from transactions.schema import TransactionInputById
 
 class TransactionCalculationsType(DjangoObjectType):
@@ -73,8 +73,8 @@ class Query(graphene.ObjectType):
       coins = list(Coin.objects.select_related().filter(
         bot__name=bot_name
       ))
-      FilteredQueryList = list(FilteredQuerySet)
-      for i in coins:
+      # FilteredQueryList = list(FilteredQuerySet)
+      # for i in coins:
 
       print(coins)
       return FilteredQuerySet
