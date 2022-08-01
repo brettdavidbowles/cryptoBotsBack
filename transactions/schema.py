@@ -232,4 +232,4 @@ class DeleteTransaction(graphene.Mutation):
 
 class Mutation(graphene.ObjectType):
 	create_transaction = CreateTransaction.Field()
-	delete_transaction = DeleteTransaction.Field()
+	# delete_transaction = DeleteTransaction.Field()
