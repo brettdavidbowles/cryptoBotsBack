@@ -30,7 +30,33 @@ class Query(graphene.ObjectType):
 	transactions_by_coin = graphene.List(TransactionType, coin_abbrev=graphene.String())
 	transactions_by_bot_and_coin = graphene.List(TransactionType, bot_name=graphene.String(), coin_abbrev=graphene.String())
 	table_data = graphene.List(TransactionType, bot_name=graphene.String(), coin_abbrev=graphene.String(), username=graphene.String())
+	bar_chart_data = graphene.List(TransactionType, bot_name=graphene.String(), username=graphene.String())
 
+	def resolve_bar_chart_data(self, info, bot_name=None, username=None):
+		if bot_name and username:
+			latest_transactions = []
+			coins = Coin.objects.filter(bot__name=bot_name)
+			def checkForCalculations(coin, index=-1):
+				try:
+					t = list(Transaction.objects.filter(
+						bot__name=bot_name
+						).filter(
+							user__username=username
+						).filter(
+							coin=coin
+						))[index]
+					tc = TransactionCalculations.objects.get(transaction=t)
+				except:
+					index = index - 1
+					checkForCalculations(coin, index)
+				else:
+					latest_transactions.append(t)
+				
+			for coin in coins:
+				checkForCalculations(coin)
+
+			return latest_transactions
+	
 	def resolve_table_data(self, info, bot_name=None, coin_abbrev=None, username=None, **kwargs):
 		if bot_name and coin_abbrev and username:
 			# return Transaction.objects.filter(
@@ -55,7 +81,6 @@ class Query(graphene.ObjectType):
 			))
 
 			if not len(transactionList):
-				print('ladskjflaksdj')
 				raise GraphQLError('Table Data does not exist')
 
 			# transactionIndex = transactionList.index(self)
