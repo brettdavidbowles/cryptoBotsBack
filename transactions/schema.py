@@ -5,7 +5,7 @@ from graphql import GraphQLError
 
 import datetime
 
-from api.models import Transaction, Bot, Coin, User, ProfitPerDay, TransactionCalculations
+from api.models import Transaction, Bot, Coin, User, TransactionCalculations
 from bots.schema import BotInput
 from coins.schema import CoinInput
 from users.schema import UserInput
@@ -59,17 +59,6 @@ class Query(graphene.ObjectType):
 	
 	def resolve_table_data(self, info, bot_name=None, coin_abbrev=None, username=None, **kwargs):
 		if bot_name and coin_abbrev and username:
-			# return Transaction.objects.filter(
-			# 	bot__name=bot_name
-			# ).filter(
-			# 	coin__abbrev=coin_abbrev
-			# ).filter(
-			# 	user__username=username
-			# ).exclude(
-			# 	self.quantity == 0 and 
-			# )
-		
-
 			transactionList = list(Transaction.objects.filter(
 				bot__name=bot_name
 			).filter(
@@ -83,26 +72,12 @@ class Query(graphene.ObjectType):
 			if not len(transactionList):
 				raise GraphQLError('Table Data does not exist')
 
-			# transactionIndex = transactionList.index(self)
-			# nextTransactionIndex = transactionList.index(self) + 1
-			# return transactionList.exclude(
-			# 	transactionList[transactionIndex].quantity == 0 and transactionList[nextTransactionIndex] ==0
-			# )
-			# for idx, x in enumerate(transactionList):
-			# 	if idx < (len(transactionList) -1):
-			# 		if x.quantity == 0 and transactionList[idx + 1].quantity == 0:
-			# 			transactionList.pop(idx)
 			index = 0
 			while index < (len(transactionList) -1):
 				if (transactionList[index].quantity == 0 and transactionList[index + 1].quantity == 0) or (transactionList[index].sell_price == 0.00 and transactionList[index + 1].sell_price == 0):
 						transactionList.pop(index)
 				else:
 					index = index + 1
-			# index = 0
-			# while index < (len(transactionList) -1):
-			# 	if transactionList[index].quantity:
-			# 		transactionList[index].sell_price = transactionList[index + 1].sell_price
-			# 	index = index + 1
 
 			return transactionList
 
